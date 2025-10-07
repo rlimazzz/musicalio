@@ -36,7 +36,7 @@ function App() {
     <div className="App">
       <h1>Minhas Músicas Favoritas</h1>
       <p>{musicas.artists.items[0].name}</p>
-      <img src="{musicas.artists.items[0].images[0].url}" alt="Capa da Música" width="200" />
+      <img src={musicas.artists.items[0].images[0].url} alt="Capa da Música" width="200" />
     </div>
   )
 }
