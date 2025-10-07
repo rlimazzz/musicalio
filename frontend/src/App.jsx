@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import './App.css'
+import Card from './components/Card';
 
 function App() {
   // Estado para armazenar a lista de músicas
@@ -35,8 +36,9 @@ function App() {
   return (
     <div className="App">
       <h1>Minhas Músicas Favoritas</h1>
-      <p>{musicas.artists.items[0].name}</p>
-      <img src={musicas.artists.items[0].images[0].url} alt="Capa da Música" width="200" />
+      <Card imagemUrl={musicas.artists.items[0].images[0].url} 
+            titulo={musicas.artists.items[0].name}
+            linkUrl={musicas.artists.items[0].external_urls.spotify}/>
     </div>
   )
 }
