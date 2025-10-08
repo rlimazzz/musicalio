@@ -6,8 +6,10 @@ import './Card.css'; // Importando o CSS para estilização
 // O componente Card recebe 'props' (propriedades) com os dados a serem exibidos
 const Card = ({ imagemUrl, titulo, descricao, linkUrl }) => {
   return (
-    // O container principal do card
-    <div className="card-container">
+    // Wrapper para centralizar o card
+    <div className="card-wrapper">
+      {/* O container principal do card */}
+      <div className="card-container">
       
       {/* Imagem do card */}
       <img src={imagemUrl} alt={`Capa para ${titulo}`} className="card-image" />
@@ -28,6 +30,7 @@ const Card = ({ imagemUrl, titulo, descricao, linkUrl }) => {
         </a>
       </div>
 
+    </div>
     </div>
   );
 };

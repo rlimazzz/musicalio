@@ -40,3 +40,26 @@
 .read-the-docs {
   color: #888;
 }
+
+.search-container {
+  margin: 2rem 0;
+}
+
+.button {
+  display: block; /* Faz o link ocupar a largura toda */
+  width: 100%;
+  padding: 7px 0;
+  text-align: center;
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #fa5c50; /* Cor verde do Spotify */
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #b93535; /* Cor um pouco mais clara ao passar o mouse */
+}

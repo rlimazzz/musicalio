@@ -1,6 +1,11 @@
 /* src/components/Card.css */
 
-/* O container principal que define o formato do card */
+
+.card-wrapper {
+  display: grid;
+  place-items: center;
+}
+
 .card-container {
   width: 300px;
   border: 1px solid #e0e0e0;
@@ -11,7 +16,7 @@
   background-color: #ffffff;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animação suave */
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  
 }
 
 /* Efeito ao passar o mouse por cima */

@@ -1,46 +1,85 @@
-// frontend/src/App.jsx
-
-import { useState, useEffect } from 'react'
-import './App.css'
+import { useState, useEffect } from 'react';
+import './App.css';
 import Card from './components/Card';
 
 function App() {
-  // Estado para armazenar a lista de músicas
-  const [musicas, setMusicas] = useState([]);
-  // Estado para mostrar uma mensagem de carregamento
+  const [searchTerm, setSearchTerm] = useState('Kendrick Lamar');
+  const [artistToSearch, setArtistToSearch] = useState('Kendrick Lamar');
+  const [artistData, setArtistData] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  const handleSearch = () => {
+    setArtistToSearch(searchTerm);
+  };
 
-  // useEffect vai rodar uma vez, quando o componente for montado
   useEffect(() => {
-    // A URL completa do endpoint do seu back-end FastAPI
-    const urlApi = "http://127.0.0.1:8000/api/musicas/KendrickLamar";
+    if (!artistToSearch) {
+      setLoading(false);
+      return;
+    }
 
-    // Usamos a função fetch() para fazer a requisição GET
+    setLoading(true);
+    setArtistData(null);
+
+    // Garante que nomes com espaços ou caracteres especiais sejam formatados para a URL
+    const encodedArtistName = encodeURIComponent(artistToSearch);
+    const urlApi = `http://127.0.0.1:8000/api/artists/${encodedArtistName}`;
+
+    // DEBUG: Verifique no console do navegador a URL exata que está sendo chamada
+    console.log("Chamando a API com a URL:", urlApi);
+
     fetch(urlApi)
-      .then(response => response.json()) // Converte a resposta para JSON
+      .then(response => response.json())
       .then(data => {
-        setMusicas(data); // Armazena os dados no nosso estado
-        setLoading(false); // Esconde a mensagem de carregamento
+        // DEBUG: Veja no console a estrutura exata dos dados recebidos do backend
+        console.log("Dados recebidos do backend:", data);
+
+        const foundArtist = data.artists?.items[0];
+
+        // DEBUG: Verifique se o artista foi encontrado corretamente dentro dos dados
+        console.log("Artista encontrado na resposta:", foundArtist);
+
+        setArtistData(foundArtist);
+        setLoading(false);
       })
       .catch(error => {
         console.error("Erro ao buscar dados da API:", error);
+        setArtistData(null);
         setLoading(false);
       });
-  }, []); // O array vazio [] garante que esta função só rode uma vez
+      
+  }, [artistToSearch]);
 
-  // Mostra a mensagem de carregamento enquanto os dados não chegam
-  if (loading) {
-    return <h1>Carregando...</h1>;
-  }
+  console.log("Estado atual do artista:", artistData);
 
   return (
     <div className="App">
-      <h1>Minhas Músicas Favoritas</h1>
-      <Card imagemUrl={musicas.artists.items[0].images[0].url} 
-            titulo={musicas.artists.items[0].name}
-            linkUrl={musicas.artists.items[0].external_urls.spotify}/>
+      <h1>Busque por um Artista</h1>
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Digite o nome do artista"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button onClick={handleSearch}>Buscar</button>
+      </div>
+
+      {loading && <h1>Carregando...</h1>}
+
+      {!loading && artistData && (
+        <Card 
+          imagemUrl={artistData.images[0].url} 
+          titulo={artistData.name}
+          linkUrl={artistData.external_urls.spotify}
+        />
+      )}
+
+      {!loading && !artistData && (
+        <h2>Nenhum artista encontrado. Tente outra busca.</h2>
+      )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
