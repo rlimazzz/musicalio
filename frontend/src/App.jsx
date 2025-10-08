@@ -1,44 +1,82 @@
-// frontend/src/App.jsx
-
-import { useState, useEffect } from 'react'
-import './App.css'
+import { useState, useEffect } from 'react';
+import './App.css';
+import Card from './components/Card';
 
 function App() {
-  // Estado para armazenar a lista de músicas
-  const [musicas, setMusicas] = useState([]);
-  // Estado para mostrar uma mensagem de carregamento
+  const [searchTerm, setSearchTerm] = useState('Queen');
+  const [artistToSearch, setArtistToSearch] = useState('Queen');
+  const [artistList, setArtistList] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const handleSearch = () => {
+    setArtistToSearch(searchTerm);
+  };
 
-  // useEffect vai rodar uma vez, quando o componente for montado
   useEffect(() => {
-    // A URL completa do endpoint do seu back-end FastAPI
-    const urlApi = "http://127.0.0.1:8000/api/musicas/KendrickLamar";
+    if (!artistToSearch) {
+      setLoading(false);
+      return;
+    }
 
-    // Usamos a função fetch() para fazer a requisição GET
+    setLoading(true);
+    setArtistList([]);
+
+    const encodedArtistName = encodeURIComponent(artistToSearch);
+    // CORREÇÃO: O IP correto para o servidor local é 127.0.0.1
+    const urlApi = `http://127.0.0.1:8000/api/artists/${encodedArtistName}`;
+
     fetch(urlApi)
-      .then(response => response.json()) // Converte a resposta para JSON
+      .then(response => response.json())
       .then(data => {
-        setMusicas(data); // Armazena os dados no nosso estado
-        setLoading(false); // Esconde a mensagem de carregamento
+        const foundArtists = data.artists?.items || [];
+        setArtistList(foundArtists);
+        setLoading(false);
       })
       .catch(error => {
         console.error("Erro ao buscar dados da API:", error);
+        setArtistList([]);
         setLoading(false);
       });
-  }, []); // O array vazio [] garante que esta função só rode uma vez
-
-  // Mostra a mensagem de carregamento enquanto os dados não chegam
-  if (loading) {
-    return <h1>Carregando...</h1>;
-  }
+      
+  }, [artistToSearch]);
 
   return (
     <div className="App">
-      <h1>Minhas Músicas Favoritas</h1>
-      <p>{musicas.artists.items[0].name}</p>
-      <img src="{musicas.artists.items[0].images[0].url}" alt="Capa da Música" width="200" />
+      <h1>Busque por um Artista</h1>
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Digite o nome do artista"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button onClick={handleSearch}>Buscar</button>
+      </div>
+
+      {loading && <h1>Carregando...</h1>}
+
+      {!loading && artistList.length > 0 && (
+        <div className="artists-container">
+          {artistList.map((artist) => {
+            const imageUrl = artist.images[0]?.url || 'https://placehold.co/300x300/222/fff?text=?';
+            
+            return (
+              <Card 
+                key={artist.id}
+                imagemUrl={imageUrl} 
+                titulo={artist.name}
+                linkUrl={artist.external_urls.spotify}
+              />
+            )
+          })}
+        </div>
+      )}
+
+      {!loading && artistList.length === 0 && (
+        <h2>Nenhum artista encontrado. Tente outra busca.</h2>
+      )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

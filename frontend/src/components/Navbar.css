@@ -1,0 +1,47 @@
+/* src/components/Navbar.css */
+@import url('https://fonts.googleapis.com/css2?family=Concert+One&display=swap');
+
+/* Estilo principal da navbar */
+.navbar {
+    font-family: "Concert One", sans-serif;
+    font-size: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #fa5c50; 
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+/* Logo/título da navbar */
+.navbar-logo {
+    font-size: 30px;
+}
+
+/* Lista de navegação */
+.navbar-menu {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+}
+
+/* Links da navbar */
+.navbar-link {
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+/* Efeito hover nos links */
+.navbar-link:hover {
+    opacity: 0.8;
+}

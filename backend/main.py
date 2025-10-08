@@ -38,7 +38,7 @@ def get_auth_header(token):
 def search_for_artists(token, artist_name):
     url = "https://api.spotify.com/v1/search"
     headers = get_auth_header(token)
-    query = f"?q={artist_name}&type=artist&limit=1"
+    query = f"?q={artist_name}&type=artist&limit=20"
     query_url = url + query
     result = get(query_url, headers=headers)
     json_result = result.json()
@@ -65,19 +65,17 @@ app.add_middleware(
     allow_headers=["*"],    # Permite todos os cabeçalhos
 )
 
-# Dados de exemplo
-musicas_db = [
-    {"id": 1, "nome": "Bohemian Rhapsody", "artista": "Queen", "avaliacao": 5},
-    {"id": 2, "nome": "Smells Like Teen Spirit", "artista": "Nirvana", "avaliacao": 4},
-    {"id": 3, "nome": "Billie Jean", "artista": "Michael Jackson", "avaliacao": 5},
-]
-
 # Endpoint para a raiz da API (só para teste)
 @app.get("/")
 def read_root():
     return {"Olá": "Mundo"}
 
-# Endpoint para buscar todas as músicas
-@app.get("/api/musicas/{artist_name}")
-def get_musicas(artist_name: str):
-    return search_for_artists(token, artist_name)
+# Endpoint para buscar artistas
+@app.get("/api/artists/{artist_name}")
+def get_artists(artist_name: str):
+    artist_data = search_for_artists(token, artist_name.lower())
+
+    if not artist_data.get("artists") or not artist_data["artists"].get("items"):
+        return {"error": "Artist not found"}
+    else:
+        return artist_data
