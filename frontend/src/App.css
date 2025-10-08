@@ -5,6 +5,10 @@
   text-align: center;
 }
 
+.App {
+  padding-top: 80px; /* Espaçamento para não ficar atrás da navbar */
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
