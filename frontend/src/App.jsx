@@ -3,9 +3,9 @@ import './App.css';
 import Card from './components/Card';
 
 function App() {
-  const [searchTerm, setSearchTerm] = useState('Kendrick Lamar');
-  const [artistToSearch, setArtistToSearch] = useState('Kendrick Lamar');
-  const [artistData, setArtistData] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('Queen');
+  const [artistToSearch, setArtistToSearch] = useState('Queen');
+  const [artistList, setArtistList] = useState([]);
   const [loading, setLoading] = useState(true);
   
   const handleSearch = () => {
@@ -19,38 +19,26 @@ function App() {
     }
 
     setLoading(true);
-    setArtistData(null);
+    setArtistList([]);
 
-    // Garante que nomes com espaços ou caracteres especiais sejam formatados para a URL
     const encodedArtistName = encodeURIComponent(artistToSearch);
+    // CORREÇÃO: O IP correto para o servidor local é 127.0.0.1
     const urlApi = `http://127.0.0.1:8000/api/artists/${encodedArtistName}`;
-
-    // DEBUG: Verifique no console do navegador a URL exata que está sendo chamada
-    console.log("Chamando a API com a URL:", urlApi);
 
     fetch(urlApi)
       .then(response => response.json())
       .then(data => {
-        // DEBUG: Veja no console a estrutura exata dos dados recebidos do backend
-        console.log("Dados recebidos do backend:", data);
-
-        const foundArtist = data.artists?.items[0];
-
-        // DEBUG: Verifique se o artista foi encontrado corretamente dentro dos dados
-        console.log("Artista encontrado na resposta:", foundArtist);
-
-        setArtistData(foundArtist);
+        const foundArtists = data.artists?.items || [];
+        setArtistList(foundArtists);
         setLoading(false);
       })
       .catch(error => {
         console.error("Erro ao buscar dados da API:", error);
-        setArtistData(null);
+        setArtistList([]);
         setLoading(false);
       });
       
   }, [artistToSearch]);
-
-  console.log("Estado atual do artista:", artistData);
 
   return (
     <div className="App">
@@ -67,15 +55,24 @@ function App() {
 
       {loading && <h1>Carregando...</h1>}
 
-      {!loading && artistData && (
-        <Card 
-          imagemUrl={artistData.images[0].url} 
-          titulo={artistData.name}
-          linkUrl={artistData.external_urls.spotify}
-        />
+      {!loading && artistList.length > 0 && (
+        <div className="artists-container">
+          {artistList.map((artist) => {
+            const imageUrl = artist.images[0]?.url || 'https://placehold.co/300x300/222/fff?text=?';
+            
+            return (
+              <Card 
+                key={artist.id}
+                imagemUrl={imageUrl} 
+                titulo={artist.name}
+                linkUrl={artist.external_urls.spotify}
+              />
+            )
+          })}
+        </div>
       )}
 
-      {!loading && !artistData && (
+      {!loading && artistList.length === 0 && (
         <h2>Nenhum artista encontrado. Tente outra busca.</h2>
       )}
     </div>
